@@ -75,6 +75,7 @@ SUBROUTINE WGRIBENCODE ( IU06, ITEST, &
 
       USE YOWGRIB  , ONLY : IGRIB_GET_VALUE, IGRIB_SET_VALUE, JPGRIB_SUCCESS
       USE YOMHOOK  , ONLY : LHOOK, DR_HOOK, JPHOOK
+      USE YOWSTAT  , ONLY : ISTREAM
       USE EC_LUN   , ONLY : NULERR
       USE OML_MOD  , ONLY : OML_GET_MAX_THREADS
 
@@ -204,6 +205,14 @@ SUBROUTINE WGRIBENCODE ( IU06, ITEST, &
           ENDIF
         ELSE
           CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'productDefinitionTemplateNumber', NTRG2TMPD)
+        ENDIF
+        WRITE(IU06,*) 'wgribencode.F90  IRET ', IRET
+        WRITE(IU06,*) 'wgribencode.F90  IDUM ', IDUM
+        CALl FLUSH(IU06)
+        IF ( ISTREAM == 1259 ) THEN
+            ! extending window DA
+            CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'productDefinitionTemplateNumber', NTRG2TMPP)
+            CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'numberOfForecastsInEnsemble', MAX(0,IDUM))
         ENDIF
 
         IF ( ITMIN /= 0 .AND. ITMAX /= 0 ) THEN

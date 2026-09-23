@@ -717,6 +717,12 @@
         MARSFCTYPE = 'fc'
         KSTREAM = 1249
         LASTREAM=.FALSE.
+      ELSE IF(ISTREAM.EQ.1259) THEN
+!       EXTENDING WAVE DATA ASSIMILATION
+        CSTREAM = 'xwda'
+        MARSFCTYPE = 'fc'
+        KSTREAM = 1259
+        LASTREAM=.TRUE.
       ELSE
         CSTREAM='****'
         MARSFCTYPE = 'fc'

@@ -190,6 +190,11 @@ IF (LHOOK) CALL DR_HOOK('PRESET_WGRIB_TEMPLATE',0,ZHOOK_HANDLE)
           ! TOTAL ENSEMBLE FORECAST NUMBER
           CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'numberOfForecastsInEnsemble', NTOTENS)
         ENDIF
+        IF ( ISTREAM == 1259 ) THEN
+          ! extending window DA
+          CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'productDefinitionTemplateNumber', NSPEC2TMPP)
+          CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'numberOfForecastsInEnsemble', MAX(0,NTOTENS))
+        ENDIF
 
         IF (CT == "S") THEN
 !         special case for spectra....
@@ -297,6 +302,11 @@ IF (LHOOK) CALL DR_HOOK('PRESET_WGRIB_TEMPLATE',0,ZHOOK_HANDLE)
             CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'productDefinitionTemplateNumber', NSPEC2TMPP)
           ELSE
             CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'productDefinitionTemplateNumber', NSPEC2TMPD)
+          ENDIF
+          IF ( ISTREAM == 1259 ) THEN
+            ! extending window DA
+            CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'productDefinitionTemplateNumber', NSPEC2TMPP)
+            CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'numberOfForecastsInEnsemble', MAX(0,NTOTENS))
           ENDIF
         ENDIF
 
