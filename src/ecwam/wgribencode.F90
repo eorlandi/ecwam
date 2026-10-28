@@ -136,7 +136,7 @@ SUBROUTINE WGRIBENCODE ( IU06, ITEST, &
       INTEGER(KIND=JWIM) :: IY1,IM1,ID1,IH1,IMN1,ISS1,IDATERES
       INTEGER(KIND=JWIM) :: IY2,IM2,ID2,IH2,IMN2,ISS2
       INTEGER(KIND=JWIM) :: IDUM, IRET, IERR
-      INTEGER(KIND=JWIM) :: NWINOFF
+      INTEGER(KIND=JWIM) :: NWINOFF, NCUTOFF_HOURS
       INTEGER(KIND=JWIM) :: NPROMA, MTHREADS, JC, JCS, JCL, JJ, ITHRS
 
 
@@ -311,7 +311,7 @@ SUBROUTINE WGRIBENCODE ( IU06, ITEST, &
         ELSEIF ( MARSTYPE == 'an' .AND. IFCST == 0 ) THEN
           ITYPE = 2
           CALL IGRIB_GET_VALUE(IGRIB_HANDLE,'stream',C12)
-          IF (C12(1:4) == 'elda' .OR. C12(1:4) == 'lwda') THEN
+          IF (C12(1:4) == 'elda' .OR. C12(1:4) == 'lwda'.or. C12(1:4) == 'xwda') THEN
             IDATERES=IDATE*100+ITIME/100
             IY2=IDATERES/1000000
             IDATERES=IDATERES-IY2*1000000
@@ -348,7 +348,14 @@ SUBROUTINE WGRIBENCODE ( IU06, ITEST, &
             ENDIF
 !           in hours
             CALL IGRIB_GET_VALUE(IGRIB_HANDLE,'offsetToEndOf4DvarWindow',IDUM,IRET)
-            IF ( IRET == 0 ) CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'offsetToEndOf4DvarWindow',NWINOFF)
+            IF ( IRET == 0 ) THEN
+              IF (C12(1:4) == 'xwda') THEN
+                ! hoursAfterDataCutoff depends on anoffset (offsetToEndOf4DvarWindow), adjust based on the new NWINOFF
+                CALL IGRIB_GET_VALUE(IGRIB_HANDLE,'hoursAfterDataCutoff',NCUTOFF_HOURS)
+                CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'hoursAfterDataCutoff',NCUTOFF_HOURS-IDUM+NWINOFF)
+              ENDIF
+              CALL IGRIB_SET_VALUE(IGRIB_HANDLE,'offsetToEndOf4DvarWindow',NWINOFF)
+            ENDIF
           ENDIF
         ELSEIF ( MARSTYPE == 'cf' ) THEN
           ITYPE = 10
